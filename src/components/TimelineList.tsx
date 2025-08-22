@@ -1,7 +1,7 @@
 import React from "react";
 import { NostrEvent } from "nostr-tools";
 
-interface TimelineEventWithProfile extends NostrEvent {
+export interface TimelineEventWithProfile extends NostrEvent {
   profile?: { name?: string; picture?: string };
 }
 
@@ -10,31 +10,28 @@ interface Props {
 }
 
 const TimelineList: React.FC<Props> = ({ events }) => {
+  if (!events || events.length === 0) {
+    return <div>投稿がありません</div>;
+  }
+
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {events.map((e) => {
         const profile = e.profile || {};
         return (
           <div
             key={e.id}
-            style={{
-              borderBottom: "1px solid #ccc",
-              marginBottom: 8,
-              display: "flex",
-              alignItems: "center",
-            }}
+            className="flex items-center p-4 border-b border-gray-200 bg-white rounded shadow-sm"
           >
             {profile.picture && (
               <img
                 src={profile.picture}
                 alt="avatar"
-                style={{ width: 40, height: 40, borderRadius: "50%", marginRight: 8 }}
+                className="w-10 h-10 rounded-full mr-3"
               />
             )}
             <div>
-              <div>
-                <strong>{profile.name || e.pubkey}</strong>
-              </div>
+              <div className="font-bold">{profile.name || e.pubkey}</div>
               <div>{e.content}</div>
             </div>
           </div>
