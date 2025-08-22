@@ -5,12 +5,12 @@ const RELAYS = ["wss://r.kojira.io", "wss://yabu.me"];
 export async function createPost(pubkey: string, content: string) {
   if (!window.nostr) throw new Error("NIP-07 extension not found");
 
-  let event: NostrEvent = {
+  const event: NostrEvent = {
     kind: 1,
     created_at: Math.floor(Date.now() / 1000),
     tags: [],
     content,
-    pubkey
+    pubkey,
   };
 
   event.id = getEventHash(event);
