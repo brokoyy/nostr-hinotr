@@ -9,7 +9,7 @@ interface Props {
   events: TimelineEventWithProfile[];
 }
 
-export const TimelineList: React.FC<Props> = ({ events }) => {
+const TimelineList: React.FC<Props> = ({ events }) => {
   return (
     <div>
       {events.map((e) => {
@@ -43,3 +43,5 @@ export const TimelineList: React.FC<Props> = ({ events }) => {
     </div>
   );
 };
+
+export default TimelineList;
