@@ -1,19 +1,11 @@
 import React from "react";
-import { loginWithNip07 } from "../api/auth";
+import { loginWithNip07, loginWithNsecApp } from "../api/auth";
 
-interface Props {
-  onLogin: (pubkey: string) => void;
+export default function Login() {
+  return (
+    <div>
+      <button onClick={loginWithNip07}>NIP-07でログイン</button>
+      <button onClick={loginWithNsecApp}>nsec.appでログイン</button>
+    </div>
+  );
 }
-
-export const LoginButton: React.FC<Props> = ({ onLogin }) => {
-  const handleLogin = async () => {
-    try {
-      const pubkey = await loginWithNip07();
-      onLogin(pubkey);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  return <button onClick={handleLogin}>Login with Nostr</button>;
-};
