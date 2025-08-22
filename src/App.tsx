@@ -1,38 +1,32 @@
-import React, { useState } from "react";
-import { LoginButton } from "./components/LoginButton";
-import { PostForm } from "./components/PostForm";
-import { TimelineList } from "./components/TimelineList";
-import { useTimeline } from "./timeline/useTimeline";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginButton from "./components/LoginButton";
+import AuthCallback from "./pages/auth/callback";
 
-export const App: React.FC = () => {
-  const [pubkey, setPubkey] = useState<string | null>(null);
-  const events = useTimeline();
+function Home() {
+  const pubkey = localStorage.getItem("pubkey");
 
   return (
-    <div style={{ padding: 20 }}>
-      {!pubkey ? (
-        <LoginButton onLogin={setPubkey} />
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Hinotr Timeline</h1>
+      {pubkey ? (
+        <div>
+          <p>ログイン中の pubkey:</p>
+          <code className="break-all">{pubkey}</code>
+        </div>
       ) : (
-        <>
-          <PostForm pubkey={pubkey} />
-          <TimelineList events={events} />
-        </>
+        <p>ログインしていません。</p>
       )}
     </div>
   );
-};
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/Login";
-import AuthCallback from "./pages/auth/callback";
+}
 
 export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginButton />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/" element={<div>ホーム画面</div>} />
       </Routes>
     </Router>
   );
