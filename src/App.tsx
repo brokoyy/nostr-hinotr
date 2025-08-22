@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Timeline from "./components/TimelineList";
 import LoginButton from "./components/LoginButton";
-import Callback from "./api/callback";
+import Callback from "./pages/auth/callback";
 
 function App() {
   return (
