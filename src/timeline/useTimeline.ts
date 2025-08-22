@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { relayInit, Filter, NostrEvent } from "nostr-tools";
+import { fetchProfile } from "../api/fetchProfile"; // apiに分ける場合
 
 const RELAYS = ["wss://r.kojira.io", "wss://yabu.me"];
 
 export function useTimeline() {
   const [events, setEvents] = useState<NostrEvent[]>([]);
+  const [profiles, setProfiles] = useState<Record<string, any>>({});
 
   useEffect(() => {
     const relays = RELAYS.map((url) => {
@@ -17,11 +19,17 @@ export function useTimeline() {
 
     const subs = relays.map((relay) => {
       const sub = relay.sub([filter]);
-      sub.on("event", (event) => {
+      sub.on("event", async (event) => {
         setEvents((prev) => {
-          if (prev.find((e) => e.id === event.id)) return prev; // 重複排除
+          if (prev.find((e) => e.id === event.id)) return prev;
           return [event, ...prev];
         });
+
+        // プロフィールが未取得なら取得
+        if (!profiles[event.pubkey]) {
+          const profile = await fetchProfile(event.pubkey);
+          setProfiles((prev) => ({ ...prev, [event.pubkey]: profile || {} }));
+        }
       });
       return sub;
     });
@@ -32,5 +40,5 @@ export function useTimeline() {
     };
   }, []);
 
-  return events;
+  return { events, profiles };
 }
