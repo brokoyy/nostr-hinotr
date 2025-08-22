@@ -1,35 +1,19 @@
-import { useState } from "react";
+import React from "react";
 import { loginWithNip07, loginWithNsecApp } from "../api/auth";
 
 export default function LoginButton() {
-  const [loading, setLoading] = useState(false);
-
   const handleNip07Login = async () => {
-    setLoading(true);
     try {
       const pubkey = await loginWithNip07();
-      localStorage.setItem("pubkey", pubkey);
-      alert("ログイン成功！ pubkey: " + pubkey);
-      // 必要に応じてリダイレクト
-      window.location.href = "/";
+      console.log("Logged in with NIP-07:", pubkey);
+      window.location.reload(); // ログイン後にタイムライン表示
     } catch (err) {
       console.error(err);
-      alert("NIP-07でのログインに失敗しました");
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleNsecAppLogin = async () => {
-    setLoading(true);
-    try {
-      await loginWithNsecApp();
-      // nsec.app はリダイレクトされるのでここには戻らない想定
-    } catch (err) {
-      console.error(err);
-      alert("nsec.appでのログインに失敗しました");
-      setLoading(false);
-    }
+  const handleNsecLogin = () => {
+    loginWithNsecApp(); // リダイレクトされる
   };
 
   return (
@@ -38,18 +22,16 @@ export default function LoginButton() {
 
       <button
         onClick={handleNip07Login}
-        className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-        disabled={loading}
+        className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
       >
-        {loading ? "ログイン中..." : "NIP-07でログイン"}
+        NIP-07でログイン
       </button>
 
       <button
-        onClick={handleNsecAppLogin}
-        className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
-        disabled={loading}
+        onClick={handleNsecLogin}
+        className="px-6 py-2 rounded bg-green-500 text-white hover:bg-green-600 transition-colors"
       >
-        {loading ? "リダイレクト中..." : "nsec.appでログイン"}
+        nsec.appでログイン
       </button>
     </div>
   );
