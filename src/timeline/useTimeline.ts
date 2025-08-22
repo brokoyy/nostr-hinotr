@@ -4,12 +4,12 @@ import { fetchProfile } from "../api/fetchProfile";
 
 const RELAYS = ["wss://r.kojira.io", "wss://yabu.me"];
 
-interface TimelineEvent extends NostrEvent {
+export interface TimelineEventWithProfile extends NostrEvent {
   profile?: { name?: string; picture?: string };
 }
 
-export function useTimeline() {
-  const [events, setEvents] = useState<TimelineEvent[]>([]);
+export function useTimeline(pubkey?: string) {
+  const [events, setEvents] = useState<TimelineEventWithProfile[]>([]);
   const [profiles, setProfiles] = useState<Record<string, { name?: string; picture?: string }>>({});
 
   useEffect(() => {
@@ -24,14 +24,12 @@ export function useTimeline() {
     const subs = relays.map((relay) => {
       const sub = relay.sub([filter]);
 
-      sub.on("event", async (event) => {
-        // TLに追加（重複排除）
+      sub.on("event", async (event: NostrEvent) => {
         setEvents((prev) => {
           if (prev.find((e) => e.id === event.id)) return prev;
           return [event, ...prev];
         });
 
-        // プロフィールが未取得なら取得
         if (!profiles[event.pubkey]) {
           const profile = await fetchProfile(event.pubkey);
           setProfiles((prev) => ({ ...prev, [event.pubkey]: profile || {} }));
@@ -45,13 +43,11 @@ export function useTimeline() {
       subs.forEach((sub) => sub.unsub());
       relays.forEach((relay) => relay.close());
     };
-  }, []);
+  }, [pubkey]);
 
-  // イベントにプロフィールを紐付けて返す
-  const eventsWithProfile: TimelineEvent[] = events.map((e) => ({
+  // プロフィールをイベントに紐付け
+  return events.map((e) => ({
     ...e,
     profile: profiles[e.pubkey] || {},
   }));
-
-  return eventsWithProfile;
 }
