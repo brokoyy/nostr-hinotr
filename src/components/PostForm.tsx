@@ -19,7 +19,7 @@ export const PostForm: React.FC<Props> = ({ pubkey }) => {
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="What's happening?"
+        placeholder="いまどうしてる?"
         rows={3}
         style={{ width: "100%" }}
       />
