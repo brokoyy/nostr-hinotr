@@ -17,3 +17,16 @@ export const TimelineList: React.FC<Props> = ({ events }) => {
     </div>
   );
 };
+
+const { events, profiles } = useTimeline();
+
+events.map((e) => {
+  const profile = profiles[e.pubkey] || {};
+  return (
+    <div key={e.id}>
+      <img src={profile.picture} alt="avatar" />
+      <strong>{profile.name || e.pubkey}</strong>
+      <p>{e.content}</p>
+    </div>
+  );
+});
