@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LoginButton } from "./components/LoginButton";
-import { TimelineList } from "./components/TimelineList";
 import { PostForm } from "./components/PostForm";
+import { TimelineList } from "./components/TimelineList";
 import { useTimeline } from "./timeline/useTimeline";
 
 export const App: React.FC = () => {
