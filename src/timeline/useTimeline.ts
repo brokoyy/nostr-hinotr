@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { relayInit, Filter, NostrEvent } from "nostr-tools";
-import { fetchProfile } from "../api/fetchProfile"; // apiに分ける場合
+import { fetchProfile } from "../api/fetchProfile"; 
 
 const RELAYS = ["wss://r.kojira.io", "wss://yabu.me"];
 
