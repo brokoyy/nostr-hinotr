@@ -13,6 +13,8 @@ export function useTimeline(pubkey?: string) {
   const [profiles, setProfiles] = useState<Record<string, { name?: string; picture?: string }>>({});
 
   useEffect(() => {
+    if (!pubkey) return;
+
     const relays = RELAYS.map((url) => {
       const relay = relayInit(url);
       relay.connect();
@@ -23,19 +25,14 @@ export function useTimeline(pubkey?: string) {
 
     const subs = relays.map((relay) => {
       const sub = relay.sub([filter]);
-
       sub.on("event", async (event: NostrEvent) => {
-        setEvents((prev) => {
-          if (prev.find((e) => e.id === event.id)) return prev;
-          return [event, ...prev];
-        });
+        setEvents((prev) => (prev.find((e) => e.id === event.id) ? prev : [event, ...prev]));
 
         if (!profiles[event.pubkey]) {
           const profile = await fetchProfile(event.pubkey);
           setProfiles((prev) => ({ ...prev, [event.pubkey]: profile || {} }));
         }
       });
-
       return sub;
     });
 
@@ -45,9 +42,5 @@ export function useTimeline(pubkey?: string) {
     };
   }, [pubkey]);
 
-  // プロフィールをイベントに紐付け
-  return events.map((e) => ({
-    ...e,
-    profile: profiles[e.pubkey] || {},
-  }));
+  return events.map((e) => ({ ...e, profile: profiles[e.pubkey] || {} }));
 }
