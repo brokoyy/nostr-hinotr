@@ -21,3 +21,8 @@ export const App: React.FC = () => {
     </div>
   );
 };
+
+import AuthCallback from "./src/api/callback";
+
+// ルート定義に追加
+<Route path="/api/callback" element={<AuthCallback />} />
