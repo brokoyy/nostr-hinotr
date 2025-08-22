@@ -22,7 +22,18 @@ export const App: React.FC = () => {
   );
 };
 
-import AuthCallback from "./src/api/callback";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import AuthCallback from "./pages/auth/callback";
 
-// ルート定義に追加
-<Route path="./src/api/callback" element={<AuthCallback />} />
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/" element={<div>ホーム画面</div>} />
+      </Routes>
+    </Router>
+  );
+}
