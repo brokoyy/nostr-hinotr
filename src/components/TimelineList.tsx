@@ -1,19 +1,12 @@
 import React from "react";
-import { TimelineEventWithProfile } from "../hooks/useTimeline";
 
-interface Props {
-  events: TimelineEventWithProfile[];
-}
-
-export const TimelineList: React.FC<Props> = ({ events }) => {
+export const TimelineList = ({ events }: { events: any[] }) => {
   return (
     <ul>
-      {events.map((e) => (
-        <li key={e.id} style={{ borderBottom: "1px solid #ccc", marginBottom: "0.5rem" }}>
-          <div>
-            <strong>{e.profile?.name || e.pubkey}</strong>
-          </div>
-          <div>{e.content}</div>
+      {events.map((e, i) => (
+        <li key={i}>
+          <img src={e.profile.picture || ""} alt="icon" width={32} />
+          <strong>{e.profile.name || e.pubkey}</strong>: {e.content}
         </li>
       ))}
     </ul>
