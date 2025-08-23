@@ -1,4 +1,4 @@
-import { getPublicKey, signEvent } from "nostr-tools";
+import { getPublicKey } from "nostr-tools";
 
 export async function loginWithNIP07() {
   if (!(window as any).nostr) throw new Error("NIP-07 not installed");
@@ -7,11 +7,10 @@ export async function loginWithNIP07() {
 }
 
 export async function loginWithNsecApp(nsec: string) {
-  const { getPublicKey } = await import("nostr-tools");
   const pubkey = getPublicKey(nsec);
   return { pubkey, method: "nsec", nsec };
 }
 
-export async function logout() {
+export function logout() {
   localStorage.removeItem("nostrAuth");
 }
