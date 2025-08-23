@@ -1,42 +1,46 @@
 import React, { useState } from "react";
 import { loginWithNIP07, loginWithNsecApp, logout } from "../api/auth";
 
-export const LoginControl = ({ onLogin }: { onLogin: (pubkey: string) => void }) => {
-  const [pubkey, setPubkey] = useState<string | null>(null);
+export const LoginControl = ({ onLogin }: { onLogin: (auth: any) => void }) => {
+  const [auth, setAuth] = useState<any>(null);
 
   const handleNIP07 = async () => {
     const res = await loginWithNIP07();
-    setPubkey(res.pubkey);
+    setAuth(res);
     localStorage.setItem("nostrAuth", JSON.stringify(res));
-    onLogin(res.pubkey);
+    onLogin(res);
   };
 
   const handleNsec = async () => {
     const nsec = prompt("Enter your nsec:");
     if (!nsec) return;
     const res = await loginWithNsecApp(nsec);
-    setPubkey(res.pubkey);
+    setAuth(res);
     localStorage.setItem("nostrAuth", JSON.stringify(res));
-    onLogin(res.pubkey);
+    onLogin(res);
   };
 
   const handleLogout = () => {
     logout();
-    setPubkey(null);
-    onLogin("");
+    setAuth(null);
+    onLogin(null);
   };
 
   return (
-    <div>
-      {pubkey ? (
+    <div style={{ marginBottom: 20 }}>
+      {auth ? (
         <>
-          <span>{pubkey}</span>
-          <button onClick={handleLogout}>Logout</button>
+          <span>{auth.pubkey}</span>
+          <button onClick={handleLogout} style={{ marginLeft: 10 }}>
+            Logout
+          </button>
         </>
       ) : (
         <>
           <button onClick={handleNIP07}>Login with NIP-07</button>
-          <button onClick={handleNsec}>Login with nsec.app</button>
+          <button onClick={handleNsec} style={{ marginLeft: 10 }}>
+            Login with nsec.app
+          </button>
         </>
       )}
     </div>
