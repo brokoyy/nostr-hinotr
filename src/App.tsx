@@ -1,37 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import TimelineList, { TimelineEventWithProfile } from "./components/TimelineList";
-import LoginControl from "./components/LoginControl";
-import Callback from "./pages/auth/callback";
-import { useTimeline } from "./timeline/useTimeline";
+import React from "react";
+import { LoginControl } from "./components/LoginControl";
+import { PostForm } from "./components/PostForm";
+import { TimelineList } from "./components/TimelineList";
+import { useAuth } from "./api/auth";
 
 const App: React.FC = () => {
-  const [pubkey, setPubkey] = useState<string | null>(
-    typeof window !== "undefined" ? localStorage.getItem("pubkey") : null
-  );
-
-  const events = useTimeline(); // タイムライン取得
-
-  const handleLogout = () => {
-    localStorage.removeItem("pubkey");
-    setPubkey(null);
-  };
+  const { user } = useAuth();
 
   return (
-    <Router>
-      <div className="App p-4">
-        <h1 className="text-2xl font-bold mb-6">Hinotr (Nostr Client)</h1>
-
-        <Routes>
-          <Route
-            path="/"
-            element={<>{pubkey ? <TimelineList events={events} /> : <LoginControl pubkey={pubkey} onLogout={handleLogout} />}</>}
-          />
-          <Route path="/callback" element={<Callback />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="max-w-xl mx-auto p-4 space-y-6">
+      <h1 className="text-2xl font-bold text-center">nostr-hinotr</h1>
+      <LoginControl />
+      {user && (
+        <>
+          <PostForm />
+          <TimelineList />
+        </>
+      )}
+    </div>
   );
 };
 
