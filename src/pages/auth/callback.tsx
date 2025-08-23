@@ -9,8 +9,9 @@ export default function AuthCallback() {
     const pubkey = params.get("pubkey");
 
     if (pubkey) {
+      console.log("Logged in with nsec.app pubkey:", pubkey);
       localStorage.setItem("pubkey", pubkey);
-      navigate("/"); // ホームに戻る
+      navigate("/"); // ホーム（タイムライン）にリダイレクト
     } else {
       alert("nsec.app 認証に失敗しました");
       navigate("/login");
