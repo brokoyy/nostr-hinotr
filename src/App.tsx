@@ -1,24 +1,18 @@
-import React from "react";
-import { LoginControl } from "./components/LoginControl";
+import React, { useState } from "react";
 import { PostForm } from "./components/PostForm";
 import { TimelineList } from "./components/TimelineList";
-import { useAuth } from "./api/auth";
+import { useTimeline } from "./hooks/useTimeline";
 
-const App: React.FC = () => {
-  const { user } = useAuth();
+export default function App() {
+  const [pubkey, setPubkey] = useState<string | null>(null);
+
+  const timeline = useTimeline(pubkey);
 
   return (
-    <div className="max-w-xl mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold text-center">nostr-hinotr</h1>
-      <LoginControl />
-      {user && (
-        <>
-          <PostForm />
-          <TimelineList />
-        </>
-      )}
+    <div>
+      <h1>Nostr Hinotr</h1>
+      <PostForm pubkey={pubkey} />
+      <TimelineList events={timeline} />
     </div>
   );
-};
-
-export default App;
+}
