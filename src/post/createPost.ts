@@ -19,7 +19,6 @@ export async function createPost(pubkey: string, content: string) {
   for (const url of RELAYS) {
     const relay = nostr.relayInit(url);
     await relay.connect();
-
     const pub = relay.publish(signedEvent);
     pub.on("ok", () => console.log(`Post published to ${url}`));
     pub.on("failed", () => console.log(`Failed to publish to ${url}`));
