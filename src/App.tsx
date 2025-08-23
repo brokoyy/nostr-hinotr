@@ -5,14 +5,14 @@ import { PostForm } from "./components/PostForm";
 import { useTimeline } from "./timeline/useTimeline";
 
 export const App = () => {
-  const [nsec, setNsec] = useState<string>("");
+  const [auth, setAuth] = useState<{ pubkey: string; nsec?: string } | null>(null);
   const events = useTimeline();
 
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <h1>nostr-hinotr</h1>
-      <LoginControl onLogin={(pubkey) => setNsec(pubkey)} />
-      {nsec && <PostForm nsec={nsec} />}
+      <LoginControl onLogin={setAuth} />
+      {auth?.nsec && <PostForm nsec={auth.nsec} />}
       <TimelineList events={events} />
     </div>
   );
