@@ -15,7 +15,7 @@ export async function createPost(content: string, nsec: string) {
   event.id = getEventHash(event);
   event.sig = await signEvent(event, nsec);
 
-  const relays = RELAYS.map(url => relayInit(url));
+  const relays = RELAYS.map((url) => relayInit(url));
   for (const relay of relays) {
     await relay.connect();
     relay.publish(event);
