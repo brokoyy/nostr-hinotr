@@ -1,26 +1,21 @@
-import * as nostr from "nostr-tools";
+import { Filter, SimplePool } from "nostr-tools";
 
 const RELAYS = ["wss://r.kojira.io", "wss://yabu.me"] as const;
 
 export async function fetchProfile(pubkey: string) {
-  for (const url of RELAYS) {
-    const relay = nostr.relayInit(url);
-    await relay.connect();
+  const pool = new SimplePool();
+  const filter: Filter = { kinds: [0], authors: [pubkey], limit: 1 };
 
-    const filter: nostr.Filter = { kinds: [0], authors: [pubkey], limit: 1 };
-    const sub = relay.sub([filter]);
-
-    return new Promise<any>((resolve) => {
-      sub.on("event", (event) => {
-        if (event.content) {
-          try {
-            const profile = JSON.parse(event.content);
-            resolve(profile);
-          } catch {
-            resolve(null);
-          }
-        }
-      });
+  return new Promise<any>((resolve) => {
+    const sub = pool.sub(RELAYS, [filter]);
+    sub.on("event", (event) => {
+      try {
+        const profile = event.content ? JSON.parse(event.content) : null;
+        resolve(profile);
+      } catch {
+        resolve(null);
+      }
     });
-  }
+    sub.on("eose", () => resolve(null));
+  });
 }
