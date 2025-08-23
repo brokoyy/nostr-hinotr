@@ -7,12 +7,19 @@ export async function loginWithNip07(): Promise<string> {
 
   const pubkey = await window.nostr.getPublicKey();
   localStorage.setItem("pubkey", pubkey);
+  console.log("Logged in with NIP-07:", pubkey);
   return pubkey;
 }
 
 // nsec.app でログイン
 export function loginWithNsecApp(): void {
-  const redirectUri = `${window.location.origin}/callback`; // App と統一
-  const url = `https://nsec.app/login?redirect_uri=${encodeURIComponent(redirectUri)}`;
-  window.location.href = url; // リダイレクト
+  try {
+    // 本番環境 URL に合わせて callback を指定
+    const redirectUri = `${window.location.origin}/callback`;
+    const url = `https://nsec.app/login?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = url; // nsec.app へリダイレクト
+  } catch (err) {
+    console.error("nsec.app login error:", err);
+    alert("nsec.app ログインに失敗しました");
+  }
 }
