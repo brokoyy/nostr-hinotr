@@ -1,25 +1,23 @@
-import { getEventHash, NostrEvent, SimplePool } from "nostr-tools";
+import { relayInit, Event } from "nostr-tools";
 
-const RELAYS = ["wss://r.kojira.io", "wss://yabu.me"] as const;
+const RELAYS = ["wss://yabu.me/", "wss://r.kojira.io/"];
 
-export async function createPost(pubkey: string, content: string) {
-  if (!window.nostr) throw new Error("NIP-07 extension not found");
-
-  const event: NostrEvent = {
+export async function createPost(content: string, nsec: string) {
+  const { getPublicKey, getEventHash, signEvent } = await import("nostr-tools");
+  const pubkey = getPublicKey(nsec);
+  const event: Event = {
     kind: 1,
-    created_at: Math.floor(Date.now() / 1000),
-    tags: [],
-    content,
     pubkey,
-    id: "",
+    created_at: Math.floor(Date.now() / 1000),
+    content,
+    tags: []
   };
-
   event.id = getEventHash(event);
-  const signedEvent = await window.nostr.signEvent(event);
+  event.sig = await signEvent(event, nsec);
 
-  const pool = new SimplePool();
-  const pub = pool.publish(RELAYS, signedEvent);
-
-  pub.on("ok", (relayUrl) => console.log(`Published to ${relayUrl}`));
-  pub.on("failed", (relayUrl) => console.log(`Failed to publish to ${relayUrl}`));
+  const relays = RELAYS.map(url => relayInit(url));
+  for (const relay of relays) {
+    await relay.connect();
+    relay.publish(event);
+  }
 }
