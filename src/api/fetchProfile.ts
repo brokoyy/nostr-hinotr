@@ -7,7 +7,7 @@ export async function fetchProfile(pubkey: string) {
     const relay = nostr.relayInit(url);
     await relay.connect();
 
-    const filter = { kinds: [0], authors: [pubkey], limit: 1 };
+    const filter: nostr.Filter = { kinds: [0], authors: [pubkey], limit: 1 };
     const sub = relay.sub([filter]);
 
     return new Promise<any>((resolve) => {
