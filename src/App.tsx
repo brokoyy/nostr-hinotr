@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import { PostForm } from "./components/PostForm";
+import { LoginControl } from "./components/LoginControl";
 import { TimelineList } from "./components/TimelineList";
+import { PostForm } from "./components/PostForm";
 import { useTimeline } from "./timeline/useTimeline";
 
-export default function App() {
-  const [pubkey, setPubkey] = useState<string | null>(null);
-
-  const timeline = useTimeline(pubkey);
+export const App = () => {
+  const [nsec, setNsec] = useState<string>("");
+  const events = useTimeline();
 
   return (
     <div>
-      <h1>Nostr Hinotr</h1>
-      <PostForm pubkey={pubkey} />
-      <TimelineList events={timeline} />
+      <h1>nostr-hinotr</h1>
+      <LoginControl onLogin={(pubkey) => setNsec(pubkey)} />
+      {nsec && <PostForm nsec={nsec} />}
+      <TimelineList events={events} />
     </div>
   );
-}
+};
