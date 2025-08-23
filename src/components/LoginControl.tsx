@@ -1,55 +1,44 @@
-import React from "react";
-import { loginWithNip07, loginWithNsecApp } from "../api/auth";
+import React, { useState } from "react";
+import { loginWithNIP07, loginWithNsecApp, logout } from "../api/auth";
 
-interface Props {
-  pubkey: string | null;
-  onLogout: () => void;
-}
+export const LoginControl = ({ onLogin }: { onLogin: (pubkey: string) => void }) => {
+  const [pubkey, setPubkey] = useState<string | null>(null);
 
-export default function LoginControl({ pubkey, onLogout }: Props) {
-  const handleNip07Login = async () => {
-    try {
-      await loginWithNip07();
-      // ここで状態管理に寄せてもよいが、簡易的にリロード
-      window.location.href = "/";
-    } catch (err) {
-      console.error(err);
-    }
+  const handleNIP07 = async () => {
+    const res = await loginWithNIP07();
+    setPubkey(res.pubkey);
+    localStorage.setItem("nostrAuth", JSON.stringify(res));
+    onLogin(res.pubkey);
   };
 
-  const handleNsecLogin = () => {
-    loginWithNsecApp();
+  const handleNsec = async () => {
+    const nsec = prompt("Enter your nsec:");
+    if (!nsec) return;
+    const res = await loginWithNsecApp(nsec);
+    setPubkey(res.pubkey);
+    localStorage.setItem("nostrAuth", JSON.stringify(res));
+    onLogin(res.pubkey);
   };
 
-  if (pubkey) {
-    return (
-      <div className="flex flex-col items-center gap-4 mt-10">
-        <h2 className="text-lg font-semibold break-all">ログイン中: {pubkey}</h2>
-        <button
-          onClick={onLogout}
-          className="px-6 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition-colors"
-        >
-          ログアウト
-        </button>
-      </div>
-    );
-  }
+  const handleLogout = () => {
+    logout();
+    setPubkey(null);
+    onLogin("");
+  };
 
   return (
-    <div className="flex flex-col items-center gap-4 mt-10">
-      <h2 className="text-xl font-bold">ログイン方法を選択してください</h2>
-      <button
-        onClick={handleNip07Login}
-        className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
-      >
-        NIP-07でログイン
-      </button>
-      <button
-        onClick={handleNsecLogin}
-        className="px-6 py-2 rounded bg-green-500 text-white hover:bg-green-600 transition-colors"
-      >
-        nsec.appでログイン
-      </button>
+    <div>
+      {pubkey ? (
+        <>
+          <span>{pubkey}</span>
+          <button onClick={handleLogout}>Logout</button>
+        </>
+      ) : (
+        <>
+          <button onClick={handleNIP07}>Login with NIP-07</button>
+          <button onClick={handleNsec}>Login with nsec.app</button>
+        </>
+      )}
     </div>
   );
-}
+};
