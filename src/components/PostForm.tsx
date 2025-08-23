@@ -11,8 +11,14 @@ export const PostForm = ({ nsec }: { nsec: string }) => {
   };
 
   return (
-    <div>
-      <textarea value={content} onChange={e => setContent(e.target.value)} />
+    <div style={{ marginBottom: 20 }}>
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder="Write something..."
+        rows={3}
+        style={{ width: "100%", marginBottom: 10 }}
+      />
       <button onClick={handleSubmit}>Post</button>
     </div>
   );
